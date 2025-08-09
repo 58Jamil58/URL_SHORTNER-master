@@ -14,11 +14,9 @@ import { redirectFromShortUrl } from "./src/controller/short_url.controller.js";
 import { errorHandler } from "./src/utils/errorHandler.js";
 import { attachUser } from "./src/utils/attachUser.js";
 
-// Get __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables
 dotenv.config({ path: path.join(__dirname, ".env") });
 
 if (!process.env.MONGO_URI) {
@@ -30,7 +28,6 @@ console.log("✅ Loaded URI:", process.env.MONGO_URI);
 
 const app = express();
 
-// Allow both local dev and deployed Netlify frontend
 app.use(cors({
   origin: [
     "http://localhost:5173", // Local development
@@ -44,16 +41,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(attachUser);
 
-// Routes
 app.use("/api/user", user_routes);
 app.use("/api/auth", auth_routes);
 app.use("/api/create", short_url);
 app.get("/:id", redirectFromShortUrl);
 
-// Error handler
 app.use(errorHandler);
 
-// Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   connectDB();
